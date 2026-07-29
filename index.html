@@ -4,91 +4,109 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>印刷报价计算器 · 独立工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F7F2E9; --panel:#FFFDF8; --border:#E4D9C3; --text:#4A4034; --text-soft:#8A7C66;
-  --primary:#B08D57; --primary-deep:#96744A; --primary-soft:#F3E9D7;
-  --good:#2E7D32; --shadow:0 6px 20px rgba(176,141,87,.14); --shadow-sm:0 2px 8px rgba(176,141,87,.10);
+  --bg1:#ffd9e3; --bg2:#fff3e0;
+  --panel:#fffaf3;
+  --panel-2:#ffffff;
+  --border:#ffc2d2;
+  --border-soft:#ffd9e4;
+  --text:#5b4550;
+  --text-soft:#9a7c86;
+  --primary:#ff8aa8;
+  --primary-deep:#ff6f92;
+  --primary-soft:#ffe3ec;
+  --good:#5bb87a;
+  --shadow:0 6px 20px rgba(255,138,168,.18);
+  --shadow-sm:0 2px 8px rgba(255,138,168,.12);
+  --stitch:rgba(255,255,255,.9);
+  --fur:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.45  0 0 0 0 0.5  0 0 0 0.30 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{font-size:16px}
-body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);
-  padding-bottom:calc(86px + env(safe-area-inset-bottom))}
-.top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#B08D57,#8F6F42);color:#fff;
-  padding:14px 16px calc(14px);box-shadow:0 4px 16px rgba(143,111,66,.35)}
-.top h1{font-size:18px;font-weight:700;letter-spacing:.5px}
-.top p{font-size:12px;opacity:.85;margin-top:3px}
+body{
+  font-family:'ZCOOL KuaiLe','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  color:var(--text);
+  padding-bottom:calc(86px + env(safe-area-inset-bottom));
+  background-image:var(--fur),
+    radial-gradient(circle at 15% 0%, #fff0f5 0%, transparent 45%),
+    radial-gradient(circle at 85% 100%, #fff6e6 0%, transparent 50%),
+    linear-gradient(180deg,#ffe3ec 0%,#fff3e6 100%);
+  background-size:200px 200px, cover, cover, cover;
+  background-blend-mode:multiply, normal, normal, normal;
+}
+.top{
+  position:sticky;top:0;z-index:30;
+  background:linear-gradient(135deg,#ffb0c6,#ff8aa8);
+  color:#fff;
+  padding:16px 16px 14px;
+  box-shadow:0 6px 18px rgba(255,138,168,.35);
+  border-bottom:2.5px dashed rgba(255,255,255,.85);
+}
+.top h1{font-size:19px;font-weight:700;letter-spacing:.5px;text-shadow:0 2px 4px rgba(180,90,110,.3)}
+.top p{font-size:12px;opacity:.92;margin-top:4px}
 .wrap{max-width:640px;margin:0 auto;padding:14px 14px 0}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:13px;box-shadow:var(--shadow-sm)}
-.card h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex:0 0 8px}
-.field{margin-bottom:11px}
+.card{
+  position:relative;
+  background:linear-gradient(160deg,#fffdf9,#fff4f7);
+  border:1.5px dashed var(--border);
+  border-radius:18px;padding:15px;margin-bottom:13px;box-shadow:var(--shadow-sm);
+  overflow:hidden;
+}
+.card::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background-image:var(--fur);background-size:160px 160px;
+  mix-blend-mode:multiply;opacity:.16;
+}
+.card h3{position:relative;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:#7a4655;z-index:1}
+.card h3 .dot{width:9px;height:9px;border-radius:50%;background:var(--primary);flex:0 0 9px;box-shadow:0 0 0 3px var(--primary-soft)}
+.field{position:relative;margin-bottom:11px;z-index:1}
 .field label{display:block;font-size:12.5px;color:var(--text-soft);margin-bottom:5px;font-weight:600}
-.field select,.field input{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;
-  background:#fff;font-size:16px;color:var(--text);outline:none;appearance:none;-webkit-appearance:none}
-.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B08D57' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+.field select,.field input{width:100%;padding:12px;border:1.5px dashed var(--border);border-radius:12px;
+  background:#fffdf9;font-size:16px;color:var(--text);outline:none;appearance:none;-webkit-appearance:none;font-family:inherit}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ff8aa8' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
-.field select:focus,.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(176,141,87,.15)}
+.field select:focus,.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(255,138,168,.18)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid2 .field{margin-bottom:0}
 .rowgap{display:grid;gap:10px;margin-bottom:11px}
-.sizebox{font-size:13px;color:var(--primary);background:var(--primary-soft);border-radius:8px;padding:9px 12px;font-weight:600}
-.seg{display:flex;background:var(--primary-soft);border-radius:10px;padding:3px;gap:3px}
-.seg button{flex:1;border:0;background:transparent;padding:10px 4px;border-radius:8px;font-size:14px;color:var(--text-soft);font-weight:600}
-.seg button.on{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm)}
-.result{background:#F0E8D9;border:1px solid var(--border);border-radius:12px;padding:13px 14px;font-size:13.5px;line-height:2;display:none}
+.sizebox{position:relative;font-size:13px;color:#b85c74;background:var(--primary-soft);border:1.5px dashed var(--border);border-radius:12px;padding:9px 12px;font-weight:600;z-index:1}
+.seg{display:flex;background:var(--primary-soft);border:1.5px dashed var(--border);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--text-soft);font-weight:600;font-family:inherit}
+.seg button.on{background:#fff;color:var(--primary-deep);box-shadow:var(--shadow-sm)}
+.result{position:relative;background:#fff4f8;border:1.5px dashed var(--border);border-radius:14px;padding:13px 14px;font-size:13.5px;line-height:2;display:none;z-index:1}
 .result.show{display:block}
-.result b{color:var(--primary)}
-.result .total{font-size:17px;border-top:1px dashed var(--border);margin-top:6px;padding-top:8px;display:block}
-.quote{background:linear-gradient(135deg,#FBF6EC,#F3E9D7);border:1px solid var(--primary);border-radius:12px;
-  padding:13px 14px;margin-top:10px;font-size:14px;line-height:2;display:none}
+.result b{color:var(--primary-deep)}
+.result .total{font-size:16px;border-top:1.5px dashed var(--border);margin-top:6px;padding-top:8px;display:block;color:#7a4655}
+.quote{position:relative;background:linear-gradient(135deg,#ffe9f0,#fff3e6);border:1.5px dashed var(--primary);border-radius:14px;
+  padding:13px 14px;margin-top:10px;font-size:14px;line-height:2;display:none;z-index:1}
 .quote.show{display:block}
-.quote b{color:var(--primary);font-size:18px}
+.quote b{color:var(--primary-deep);font-size:18px}
 .hint{font-size:11.5px;color:var(--text-soft);line-height:1.8;margin-top:10px}
 details{margin-top:4px}
-details summary{font-size:13px;color:var(--primary);font-weight:600;cursor:pointer;padding:6px 0;list-style:none}
+details summary{font-size:13px;color:var(--primary-deep);font-weight:600;cursor:pointer;padding:6px 0;list-style:none}
 details summary::before{content:"▸ ";transition:.2s}
 details[open] summary::before{content:"▾ "}
 .links{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
-.links a{flex:0 0 auto;text-decoration:none;font-size:12.5px;color:var(--primary);border:1px solid var(--border);
-  background:#fff;border-radius:999px;padding:8px 14px;white-space:nowrap;box-shadow:var(--shadow-sm)}
-.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,253,248,.96);backdrop-filter:blur(8px);
-  border-top:1px solid var(--border);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center}
+.links a{flex:0 0 auto;text-decoration:none;font-size:12.5px;color:#b85c74;border:1.5px dashed var(--border);
+  background:#fffdf9;border-radius:999px;padding:8px 14px;white-space:nowrap;box-shadow:var(--shadow-sm)}
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,250,244,.97);backdrop-filter:blur(8px);
+  border-top:1.5px dashed var(--border);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center}
 .bottombar .sum{flex:1;min-width:0}
 .bottombar .sum .lab{font-size:11px;color:var(--text-soft)}
-.bottombar .sum .val{font-size:19px;font-weight:800;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.btn{border:0;border-radius:12px;padding:13px 22px;font-size:16px;font-weight:700;cursor:pointer}
-.btn.main{background:linear-gradient(135deg,#B08D57,#8F6F42);color:#fff;box-shadow:0 4px 14px rgba(143,111,66,.4)}
-.btn.ghost{background:#fff;color:var(--text-soft);border:1px solid var(--border);font-size:14px;padding:13px 16px}
+.bottombar .sum .val{font-size:19px;font-weight:800;color:var(--primary-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:0;border-radius:14px;padding:13px 22px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn.main{background:linear-gradient(135deg,#ff9bb5,#ff6f92);color:#fff;box-shadow:0 4px 14px rgba(255,111,146,.4)}
+.btn.ghost{background:#fff;color:var(--text-soft);border:1.5px dashed var(--border);font-size:14px;padding:13px 16px}
 @media(min-width:641px){ .wrap{padding-top:20px} }
 </style>
-<script src="https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js"></script>
-<script>
-(function(){
-  try{
-    var beacon=new BeaconAction({
-      appkey:'0WEB06U85YBSLJNL',
-      versionCode:'1.0.0',
-      channelID:'share',
-      delay:1000,
-      sessionDuration:30*60*1000,
-      isOversea:false,
-      needReportRqdEvent:false
-    });
-    beacon.onDirectUserAction('preview_page_view',{
-      'url':location.href,
-      'referrer':document.referrer,
-      'title':document.title,
-      'sandbox_id':'f4bff03ce6ed4ea3a4af52651a551f49'
-    });
-  }catch(e){}
-})();
-</script></head>
+</head>
 <body>
 <header class="top">
-  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-    <h1>🧮 印刷报价计算器</h1>
-  </div>
+  <h1>🐴 印刷报价计算器</h1>
   <p>成本核算独立工作台 · 纸张/不干胶/白水铜 · 自动报价与利润</p>
 </header>
 
@@ -143,9 +161,13 @@ details[open] summary::before{content:"▾ "}
     <div class="grid2 rowgap">
       <div class="field"><label>是否预模切</label><select id="cm-pre"><option>是</option><option>否</option></select></div>
       <div class="field"><label>单枚长度(cm)</label><input type="number" id="cm-unitlen" value="10" inputmode="decimal"/></div>
-      <div class="field"><label>印刷色彩</label><select id="cm-acolor"><option value="0">无印</option><option value="0.13">黑白(0.13)</option><option value="0.3" selected>彩色(0.3)</option></select></div>
     </div>
-    <div class="field"><label>是否模切刀版</label><select id="cm-adie"><option>否</option><option>是</option></select></div>
+    <div class="grid2 rowgap">
+      <div class="field"><label>是否模切刀版</label><select id="cm-adie"><option>否</option><option>是</option></select></div>
+      <div class="field"><label>印刷色彩</label>
+        <select id="cm-acolor"><option value="0">无印</option><option value="0.12">黑白(+0.12)</option><option value="0.3" selected>彩色(+0.3)</option></select>
+      </div>
+    </div>
   </div>
 
   <!-- ② 白水铜参数 -->
@@ -178,7 +200,7 @@ details[open] summary::before{content:"▾ "}
   <div class="card">
     <details>
       <summary>查看计算词库与规则</summary>
-      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费仅&gt;1000印另算：四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；印刷费彩印0.3/印、黑白0.13/印；⑤白水铜基材0.3/张，彩印+0.3、黑白印+0.12；⑥出版费：四色固定150元，单色=单色数量×版单价；模切刀版50起+0.05/张、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
+      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费仅&gt;1000印另算：四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；⑤白水铜基材0.3/张，彩印+0.3、黑白印+0.12；⑥出版费：四色固定150元，单色=单色数量×版单价；模切刀版50起+0.05/张、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
     </details>
     <div style="margin-top:10px">
       <div style="font-size:12.5px;color:var(--text-soft);font-weight:600;margin-bottom:7px">📈 原材料行情参考</div>
@@ -192,6 +214,7 @@ details[open] summary::before{content:"▾ "}
     </div>
   </div>
 
+  <div class="hint" style="text-align:center;padding-bottom:8px;color:var(--text-soft)">马到福来 · 软萌植绒风 · 一键报价</div>
 </div>
 
 <!-- 底部固定操作栏 -->
@@ -258,9 +281,13 @@ function calc(){
     const pre=$('cm-pre').value==='是', unit=pre?2.5:2.0;
     const m=qty*(num('cm-unitlen')/100);
     add(`不干胶卷材费（${pre?'已模切':'未模切'} ${unit}元/米 × ${m.toFixed(2)}米）`, m*unit);
-    const ac=+$('cm-acolor').value;
-    if(ac>0) add(`印刷费（${ac===0.3?'彩色':'黑白'} ${ac}元/印 × ${qty}印）`, ac*qty);
     if($('cm-adie').value==='是') add('模切刀版费（50起 +0.05/张）', 50+(qty>1000?0.05*(qty-1000):0));
+    // 不干胶印刷费：彩色 0.3/张、黑白 0.12/张，单独列项计算
+    const ap=+$('cm-acolor').value;
+    if(ap>0){
+      const an=ap===0.3?'彩色':'黑白';
+      add(`不干胶印刷费（${an} ${ap}元/张 × ${qty}张）`, ap*qty);
+    }
   } else if(cat==='白水铜'){
     const addc=+$('cm-color').value, per=0.3+addc;
     add(`白水铜费（基材0.3 + ${addc?('印色附加'+addc):'无印'} = ${per}元/张 × ${qty}）`, per*qty);
