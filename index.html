@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>印刷报价计算器 · 独立工作台</title>
+<style>
+:root{
+  --bg:#F7F2E9; --panel:#FFFDF8; --border:#E4D9C3; --text:#4A4034; --text-soft:#8A7C66;
+  --primary:#B08D57; --primary-deep:#96744A; --primary-soft:#F3E9D7;
+  --good:#2E7D32; --shadow:0 6px 20px rgba(176,141,87,.14); --shadow-sm:0 2px 8px rgba(176,141,87,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);
+  padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#B08D57,#8F6F42);color:#fff;
+  padding:14px 16px calc(14px);box-shadow:0 4px 16px rgba(143,111,66,.35)}
+.top h1{font-size:18px;font-weight:700;letter-spacing:.5px}
+.top p{font-size:12px;opacity:.85;margin-top:3px}
+.wrap{max-width:640px;margin:0 auto;padding:14px 14px 0}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:13px;box-shadow:var(--shadow-sm)}
+.card h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex:0 0 8px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:12.5px;color:var(--text-soft);margin-bottom:5px;font-weight:600}
+.field select,.field input{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;
+  background:#fff;font-size:16px;color:var(--text);outline:none;appearance:none;-webkit-appearance:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B08D57' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+.field select:focus,.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(176,141,87,.15)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid2 .field{margin-bottom:0}
+.rowgap{display:grid;gap:10px;margin-bottom:11px}
+.sizebox{font-size:13px;color:var(--primary);background:var(--primary-soft);border-radius:8px;padding:9px 12px;font-weight:600}
+.seg{display:flex;background:var(--primary-soft);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;padding:10px 4px;border-radius:8px;font-size:14px;color:var(--text-soft);font-weight:600}
+.seg button.on{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm)}
+.result{background:#F0E8D9;border:1px solid var(--border);border-radius:12px;padding:13px 14px;font-size:13.5px;line-height:2;display:none}
+.result.show{display:block}
+.result b{color:var(--primary)}
+.result .total{font-size:17px;border-top:1px dashed var(--border);margin-top:6px;padding-top:8px;display:block}
+.quote{background:linear-gradient(135deg,#FBF6EC,#F3E9D7);border:1px solid var(--primary);border-radius:12px;
+  padding:13px 14px;margin-top:10px;font-size:14px;line-height:2;display:none}
+.quote.show{display:block}
+.quote b{color:var(--primary);font-size:18px}
+.hint{font-size:11.5px;color:var(--text-soft);line-height:1.8;margin-top:10px}
+details{margin-top:4px}
+details summary{font-size:13px;color:var(--primary);font-weight:600;cursor:pointer;padding:6px 0;list-style:none}
+details summary::before{content:"▸ ";transition:.2s}
+details[open] summary::before{content:"▾ "}
+.links{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.links a{flex:0 0 auto;text-decoration:none;font-size:12.5px;color:var(--primary);border:1px solid var(--border);
+  background:#fff;border-radius:999px;padding:8px 14px;white-space:nowrap;box-shadow:var(--shadow-sm)}
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,253,248,.96);backdrop-filter:blur(8px);
+  border-top:1px solid var(--border);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center}
+.bottombar .sum{flex:1;min-width:0}
+.bottombar .sum .lab{font-size:11px;color:var(--text-soft)}
+.bottombar .sum .val{font-size:19px;font-weight:800;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:0;border-radius:12px;padding:13px 22px;font-size:16px;font-weight:700;cursor:pointer}
+.btn.main{background:linear-gradient(135deg,#B08D57,#8F6F42);color:#fff;box-shadow:0 4px 14px rgba(143,111,66,.4)}
+.btn.ghost{background:#fff;color:var(--text-soft);border:1px solid var(--border);font-size:14px;padding:13px 16px}
+@media(min-width:641px){ .wrap{padding-top:20px} }
+</style>
+<script src="https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js"></script>
+<script>
+(function(){
+  try{
+    var beacon=new BeaconAction({
+      appkey:'0WEB06U85YBSLJNL',
+      versionCode:'1.0.0',
+      channelID:'share',
+      delay:1000,
+      sessionDuration:30*60*1000,
+      isOversea:false,
+      needReportRqdEvent:false
+    });
+    beacon.onDirectUserAction('preview_page_view',{
+      'url':location.href,
+      'referrer':document.referrer,
+      'title':document.title,
+      'sandbox_id':'f4bff03ce6ed4ea3a4af52651a551f49'
+    });
+  }catch(e){}
+})();
+</script></head>
+<body>
+<header class="top">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <h1>🧮 印刷报价计算器</h1>
+  </div>
+  <p>成本核算独立工作台 · 纸张/不干胶/白水铜 · 自动报价与利润</p>
+</header>
+
+<div class="wrap">
+  <!-- ① 基本信息 -->
+  <div class="card">
+    <h3><span class="dot"></span>① 基本信息</h3>
+    <div class="grid2">
+      <div class="field"><label>材料大类</label>
+        <select id="cm-cat">
+          <option value="铜版纸">铜版纸</option><option value="白卡">白卡</option>
+          <option value="牛皮纸">牛皮纸</option><option value="不干胶">不干胶</option>
+          <option value="白水铜">白水铜（32×46cm）</option>
+        </select>
+      </div>
+      <div class="field"><label>印刷数量(印)</label><input type="number" id="cm-qty" value="1000" inputmode="numeric"/></div>
+    </div>
+  </div>
+
+  <!-- ② 纸张类参数 -->
+  <div class="card" id="grp-paper">
+    <h3><span class="dot"></span>② 纸张参数</h3>
+    <div class="grid2 rowgap">
+      <div class="field"><label>克重(g)</label><select id="cm-weight"><option>157</option><option selected>300</option><option>250</option><option>350</option><option>200</option></select></div>
+      <div class="field"><label>大度/正度</label><select id="cm-std"><option>大度</option><option>正度</option></select></div>
+      <div class="field"><label>开数</label><select id="cm-up"><option>1</option><option>2</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>16</option><option>32</option></select></div>
+      <div class="field"><label>纸张单价(元/张·每开)</label><input type="number" id="cm-paperprice" step="0.001" inputmode="decimal"/></div>
+    </div>
+    <div class="sizebox" style="margin-bottom:11px">开度尺寸：<span id="cm-size">—</span></div>
+    <div class="grid2 rowgap">
+      <div class="field"><label>印刷类型</label><select id="cm-ptype"><option>四色</option><option>单色</option></select></div>
+      <div class="field"><label>印刷面</label><select id="cm-printside"><option>单面</option><option>双面</option></select></div>
+    </div>
+    <div class="grid2 rowgap" id="grp-mono" style="display:none">
+      <div class="field"><label>单色面积等级</label><select id="cm-area"><option value="30">小(30)</option><option value="40" selected>中(40)</option><option value="50">大(50)</option></select></div>
+      <div class="field"><label>单色数量</label><select id="cm-colors"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      <div class="field" style="grid-column:1/-1"><label>出版版单价(元/版)</label><input type="number" id="cm-plateprice" value="30" inputmode="decimal"/></div>
+    </div>
+    <div class="grid2 rowgap">
+      <div class="field"><label>覆膜</label><select id="cm-lam"><option>无</option><option>亚膜</option><option>光膜</option></select></div>
+      <div class="field" id="grp-lamside" style="display:none"><label>覆膜面</label><select id="cm-lamside"><option>单面</option><option>双面</option></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>是否对裱</label><select id="cm-mount"><option>否</option><option>是</option></select></div>
+      <div class="field"><label>是否模切</label><select id="cm-die"><option>否</option><option>是</option></select></div>
+    </div>
+  </div>
+
+  <!-- ② 不干胶参数 -->
+  <div class="card" id="grp-adhesive" style="display:none">
+    <h3><span class="dot"></span>② 不干胶参数</h3>
+    <div class="grid2 rowgap">
+      <div class="field"><label>是否预模切</label><select id="cm-pre"><option>是</option><option>否</option></select></div>
+      <div class="field"><label>单枚长度(cm)</label><input type="number" id="cm-unitlen" value="10" inputmode="decimal"/></div>
+      <div class="field"><label>印刷色彩</label><select id="cm-acolor"><option value="0">无印</option><option value="0.13">黑白(0.13)</option><option value="0.3" selected>彩色(0.3)</option></select></div>
+    </div>
+    <div class="field"><label>是否模切刀版</label><select id="cm-adie"><option>否</option><option>是</option></select></div>
+  </div>
+
+  <!-- ② 白水铜参数 -->
+  <div class="card" id="grp-copper" style="display:none">
+    <h3><span class="dot"></span>② 白水铜参数</h3>
+    <div class="field"><label>印刷色彩</label>
+      <select id="cm-color"><option value="0">无印</option><option value="0.12">黑白(+0.12)</option><option value="0.3" selected>彩色(+0.3)</option></select>
+    </div>
+  </div>
+
+  <!-- ③ 报价加成 -->
+  <div class="card">
+    <h3><span class="dot"></span>③ 报价加成（选填）</h3>
+    <div class="grid2 rowgap">
+      <div class="field"><label>其它费用(元·裁切/运费等)</label><input type="number" id="cm-other" value="0" inputmode="decimal"/></div>
+      <div class="field"><label>利润加成(%)</label><input type="number" id="cm-margin" value="20" inputmode="decimal"/></div>
+      <div class="field"><label>税点(%)</label><input type="number" id="cm-tax" value="0" inputmode="decimal"/></div>
+      <div class="field"><label>&nbsp;</label><div class="sizebox">销售报价 = (成本+其它)×(1+利润%)×(1+税%)</div></div>
+    </div>
+  </div>
+
+  <!-- 结果 -->
+  <div class="card" id="res-card" style="display:none">
+    <h3><span class="dot"></span>④ 计算结果</h3>
+    <div id="cm-result" class="result"></div>
+    <div id="cm-quote" class="quote"></div>
+  </div>
+
+  <!-- 规则与行情 -->
+  <div class="card">
+    <details>
+      <summary>查看计算词库与规则</summary>
+      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费仅&gt;1000印另算：四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；印刷费彩印0.3/印、黑白0.13/印；⑤白水铜基材0.3/张，彩印+0.3、黑白印+0.12；⑥出版费：四色固定150元，单色=单色数量×版单价；模切刀版50起+0.05/张、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
+    </details>
+    <div style="margin-top:10px">
+      <div style="font-size:12.5px;color:var(--text-soft);font-weight:600;margin-bottom:7px">📈 原材料行情参考</div>
+      <div class="links">
+        <a href="https://www.baidu.com/s?wd=%E9%93%9C%E7%89%88%E7%BA%B8%20%E4%BB%8A%E6%97%A5%E7%BA%B8%E4%BB%B7" target="_blank">铜版纸纸价 ↗</a>
+        <a href="https://www.baidu.com/s?wd=%E7%99%BD%E5%8D%A1%E7%BA%B8%20%E4%BB%8A%E6%97%A5%E4%BB%B7%E6%A0%BC%E8%A1%8C%E6%83%85" target="_blank">白卡行情 ↗</a>
+        <a href="https://www.baidu.com/s?wd=%E7%89%9B%E7%9A%AE%E7%BA%B8%20%E4%BB%B7%E6%A0%BC%E8%A1%8C%E6%83%85" target="_blank">牛皮纸行情 ↗</a>
+        <a href="https://www.baidu.com/s?wd=%E4%B8%8D%E5%B9%B2%E8%83%B6%E6%9D%90%E6%96%99%20%E4%BB%B7%E6%A0%BC" target="_blank">不干胶材料 ↗</a>
+        <a href="https://www.baidu.com/s?wd=%E7%94%B5%E5%8C%96%E9%93%9D%E7%83%AB%E9%87%91%E7%AE%94%20%E4%BB%B7%E6%A0%BC" target="_blank">烫金箔材 ↗</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 底部固定操作栏 -->
+<div class="bottombar">
+  <div class="sum"><div class="lab">直接成本合计</div><div class="val" id="bar-total">¥ —</div></div>
+  <button class="btn ghost" id="cm-reset">重填</button>
+  <button class="btn main" id="cm-calc">计算报价</button>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const PAPER={
+  '铜版纸':{'157':{大度:1.05},'300':{正度:1.6,大度:1.8}},
+  '白卡':{'250':{大度:1.3},'300':{大度:1.5},'350':{大度:1.8}},
+  '牛皮纸':{'300':{大度:2.0}}
+};
+const SIZES={
+  '1':{正度:'78.7×109.2', 大度:'88.9×119.4'},
+  '4':{正度:'39.0×54.0',  大度:'44.0×59.0'},
+  '5':{正度:'33.0×45.0',  大度:'38.0×50.2'},
+  '6':{正度:'26.0×56.0',  大度:'29.4×59.4'},
+  '7':{正度:'26.0×41.0',  大度:'29.4×44.4'},
+  '8':{正度:'27.0×39.0',  大度:'29.5×44.0'},
+  '9':{正度:'19.5×54.0',  大度:'22.0×59.0'},
+  '10':{正度:'21.6×39.0', 大度:'23.6×44.0'}
+};
+function num(id){ const el=$(id); return el?(+el.value||0):0; }
+function showSize(){
+  const s=SIZES[$('cm-up').value] && SIZES[$('cm-up').value][$('cm-std').value];
+  $('cm-size').textContent = s ? ($('cm-std').value+' '+s+' cm') : '该开度尺寸未收录';
+}
+function sizeOf(up,std){
+  const s=SIZES[up]&&SIZES[up][std]; if(!s)return null;
+  const [w,h]=s.split('×').map(Number); return {w,h};
+}
+function syncPaper(){
+  const full=PAPER[$('cm-cat').value]?.[$('cm-weight').value]?.[$('cm-std').value];
+  const el=$('cm-paperprice');
+  if(full!=null){ el.value=(full/(+$('cm-up').value||1)).toFixed(4); el.placeholder=''; }
+  else { el.value=''; el.placeholder='未收录，请手填'; }
+  showSize();
+}
+function toggle(){
+  const cat=$('cm-cat').value;
+  $('grp-paper').style.display   =(cat==='铜版纸'||cat==='白卡'||cat==='牛皮纸')?'':'none';
+  $('grp-adhesive').style.display=(cat==='不干胶')?'':'none';
+  $('grp-copper').style.display  =(cat==='白水铜')?'':'none';
+  $('grp-mono').style.display    =($('cm-ptype').value==='单色')?'':'none';
+  $('grp-lamside').style.display =($('cm-lam').value!=='无')?'':'none';
+}
+['cm-cat','cm-weight','cm-std','cm-up','cm-ptype','cm-lam'].forEach(id=>$(id).addEventListener('change',()=>{toggle();syncPaper();}));
+toggle(); syncPaper();
+
+function calc(){
+  const cat=$('cm-cat').value, qty=num('cm-qty');
+  $('res-card').style.display='';
+  const R=$('cm-result'), Q=$('cm-quote');
+  R.classList.add('show');
+  if(qty<=0){ R.textContent='请填写有效数量。'; Q.classList.remove('show'); $('bar-total').textContent='¥ —'; return; }
+  const lines=[]; let subtotal=0;
+  const add=(name,val)=>{ if(val>0){ lines.push([name,val]); subtotal+=val; } };
+
+  if(cat==='不干胶'){
+    const pre=$('cm-pre').value==='是', unit=pre?2.5:2.0;
+    const m=qty*(num('cm-unitlen')/100);
+    add(`不干胶卷材费（${pre?'已模切':'未模切'} ${unit}元/米 × ${m.toFixed(2)}米）`, m*unit);
+    const ac=+$('cm-acolor').value;
+    if(ac>0) add(`印刷费（${ac===0.3?'彩色':'黑白'} ${ac}元/印 × ${qty}印）`, ac*qty);
+    if($('cm-adie').value==='是') add('模切刀版费（50起 +0.05/张）', 50+(qty>1000?0.05*(qty-1000):0));
+  } else if(cat==='白水铜'){
+    const addc=+$('cm-color').value, per=0.3+addc;
+    add(`白水铜费（基材0.3 + ${addc?('印色附加'+addc):'无印'} = ${per}元/张 × ${qty}）`, per*qty);
+  } else {
+    const perSheet=num('cm-paperprice');
+    add(`纸张费（每开 ¥${perSheet.toFixed(3)} = 全开价÷${$('cm-up').value}开 × ${qty}张）`, perSheet*qty);
+    const sideMul=($('cm-printside').value==='双面')?2:1;
+    const is4=$('cm-ptype').value==='四色';
+    const cols=(num('cm-colors')||1), base=+$('cm-area').value;
+    const passes=is4?1:Math.ceil(cols/2);
+    let print=0;
+    if(qty>1000){
+      const over=qty-1000;
+      print=is4 ? 0.03*over*sideMul : (base+0.03*over)*passes*sideMul;
+    }
+    const ptypeNote=is4?'':((' 等级'+$('cm-area').value)+' '+cols+'色('+passes+'次印)');
+    const sideNote=$('cm-printside').value==='双面'?' ×2':'';
+    add(`印刷费（${$('cm-ptype').value}${ptypeNote} · ${$('cm-printside').value}${sideNote}${qty>1000?'，>1000印+0.03/印':'，≤1000印仅收出版费'}）`, print);
+    const lam=$('cm-lam').value;
+    if(lam!=='无'){
+      const up=(lam==='亚膜'?0.55:0.5);
+      const sz=sizeOf($('cm-up').value,$('cm-std').value);
+      if(sz){
+        const area=(sz.w/100)*(sz.h/100);
+        const m2=qty*area*($('cm-lamside').value==='双面'?2:1);
+        add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}cm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
+      }
+    }
+    const pub = is4 ? 150 : (num('cm-colors')||1)*num('cm-plateprice');
+    add(`出版费（${is4?'四色固定150元':(num('cm-colors')+'色 × '+num('cm-plateprice')+'元/版')}）`, pub);
+    if($('cm-mount').value==='是'){ const sh=Math.ceil(qty/2); add(`对裱费（0.08元/张 × ${sh}张，两张合1张）`, 0.08*sh); }
+    if($('cm-die').value==='是') add('模切刀版费（50起 +0.05/张）', 50+(qty>1000?0.05*(qty-1000):0));
+  }
+
+  const unit=subtotal/qty;
+  let html=`📦 <b>${cat}</b> × ${qty} 印<br>`;
+  lines.forEach(([n,v])=>html+=`· ${n}：¥${v.toFixed(2)}<br>`);
+  html+=`<b class="total">直接成本合计：¥${subtotal.toFixed(2)}　｜　单件 ¥${unit.toFixed(3)}/个</b>`;
+  R.innerHTML=html;
+  $('bar-total').textContent='¥ '+subtotal.toFixed(2);
+
+  // 报价与利润
+  const other=num('cm-other'), margin=num('cm-margin')/100, tax=num('cm-tax')/100;
+  const costAll=subtotal+other;
+  const quote=costAll*(1+margin)*(1+tax);
+  const profit=quote-costAll-costAll*(1+margin)*tax; // 利润=加成部分（税费另计）
+  Q.innerHTML=`💰 建议销售报价：<b>¥${quote.toFixed(2)}</b>（单件 ¥${(quote/qty).toFixed(3)}）<br>
+  总成本（含其它费用¥${other.toFixed(2)}）：¥${costAll.toFixed(2)}<br>
+  预计利润：¥${(costAll*margin).toFixed(2)}（加成 ${(margin*100).toFixed(0)}%${tax?('，税点 '+(tax*100).toFixed(1)+'%'):''}）`;
+  Q.classList.add('show');
+  $('res-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function reset(){
+  $('cm-cat').value='铜版纸'; $('cm-qty').value=1000; $('cm-weight').value='300'; $('cm-std').value='大度'; $('cm-up').value='6';
+  $('cm-ptype').value='四色'; $('cm-area').value='40'; $('cm-printside').value='单面'; $('cm-lam').value='无'; $('cm-lamside').value='单面';
+  $('cm-mount').value='否'; $('cm-die').value='否';
+  $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='是'; $('cm-unitlen').value=10;
+  $('cm-adie').value='否'; $('cm-acolor').value='0.3'; $('cm-color').value='0.3';
+  $('cm-other').value=0; $('cm-margin').value=20; $('cm-tax').value=0;
+  toggle(); syncPaper();
+  $('cm-result').classList.remove('show'); $('cm-quote').classList.remove('show');
+  $('res-card').style.display='none'; $('bar-total').textContent='¥ —';
+}
+$('cm-calc').addEventListener('click',calc);
+$('cm-reset').addEventListener('click',reset);
+</script>
+</body>
+</html>
