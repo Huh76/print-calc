@@ -132,12 +132,12 @@ details[open] summary::before{content:"▾ "}
     <div class="grid2 rowgap">
       <div class="field"><label>克重(g)</label><select id="cm-weight"><option>157</option><option selected>300</option><option>250</option><option>350</option><option>200</option></select></div>
       <div class="field"><label>大度/正度</label><select id="cm-std"><option>大度</option><option>正度</option></select></div>
-      <div class="field"><label>开数</label><select id="cm-up"><option>1</option><option>2</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>16</option><option>32</option></select></div>
+      <div class="field"><label>开数</label><select id="cm-up"><option>1</option><option>4</option><option>5</option><option selected>6</option><option>8</option><option>9</option><option>10</option></select></div>
       <div class="field"><label>纸张单价(元/张·每开)</label><input type="number" id="cm-paperprice" step="0.001" inputmode="decimal"/></div>
     </div>
     <div class="sizebox" style="margin-bottom:11px">开度尺寸：<span id="cm-size">—</span></div>
     <div class="grid2 rowgap">
-      <div class="field"><label>印刷类型</label><select id="cm-ptype"><option>四色</option><option>单色</option></select></div>
+      <div class="field"><label>印刷类型</label><select id="cm-ptype"><option>四色</option><option>单色</option><option>快印黑白</option><option>快印彩色</option></select></div>
       <div class="field"><label>印刷面</label><select id="cm-printside"><option>单面</option><option>双面</option></select></div>
     </div>
     <div class="grid2 rowgap" id="grp-mono" style="display:none">
@@ -200,7 +200,7 @@ details[open] summary::before{content:"▾ "}
   <div class="card">
     <details>
       <summary>查看计算词库与规则</summary>
-      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费仅&gt;1000印另算：四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；⑤白水铜基材0.3/张，彩印+0.3、黑白印+0.12；⑥出版费：四色固定150元，单色=单色数量×版单价；模切刀版50起+0.05/张、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
+      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费：四色/单色仅&gt;1000印另算（四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费）；快印按数字印刷计：黑白0.12/印、彩色0.3/印，×印数(双面×2)，无出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；⑤白水铜基材0.3/张，彩印+0.3、黑白印+0.12；⑥出版费：四色固定150元，单色=单色数量×版单价；模切刀版50起+0.05/张、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
     </details>
     <div style="margin-top:10px">
       <div style="font-size:12.5px;color:var(--text-soft);font-weight:600;margin-bottom:7px">📈 原材料行情参考</div>
@@ -235,10 +235,9 @@ const SIZES={
   '1':{正度:'78.7×109.2', 大度:'88.9×119.4'},
   '4':{正度:'39.0×54.0',  大度:'44.0×59.0'},
   '5':{正度:'33.0×45.0',  大度:'38.0×50.2'},
-  '6':{正度:'26.0×56.0',  大度:'29.4×59.4'},
-  '7':{正度:'26.0×41.0',  大度:'29.4×44.4'},
+  '6':{正度:'36.0×39.0',  大度:'39.4×44.0'},
   '8':{正度:'27.0×39.0',  大度:'29.5×44.0'},
-  '9':{正度:'19.5×54.0',  大度:'22.0×59.0'},
+  '9':{正度:'26.0×36.0',  大度:'29.4×39.4'},
   '10':{正度:'21.6×39.0', 大度:'23.6×44.0'}
 };
 function num(id){ const el=$(id); return el?(+el.value||0):0; }
@@ -295,17 +294,23 @@ function calc(){
     const perSheet=num('cm-paperprice');
     add(`纸张费（每开 ¥${perSheet.toFixed(3)} = 全开价÷${$('cm-up').value}开 × ${qty}张）`, perSheet*qty);
     const sideMul=($('cm-printside').value==='双面')?2:1;
-    const is4=$('cm-ptype').value==='四色';
+    const ptype=$('cm-ptype').value;
+    const is4=ptype==='四色';
+    const isK=ptype==='快印黑白'||ptype==='快印彩色';
+    const kRate=isK?(ptype==='快印黑白'?0.12:0.3):0;
     const cols=(num('cm-colors')||1), base=+$('cm-area').value;
     const passes=is4?1:Math.ceil(cols/2);
     let print=0;
-    if(qty>1000){
+    if(isK){
+      print=kRate*qty*sideMul;
+    } else if(qty>1000){
       const over=qty-1000;
       print=is4 ? 0.03*over*sideMul : (base+0.03*over)*passes*sideMul;
     }
-    const ptypeNote=is4?'':((' 等级'+$('cm-area').value)+' '+cols+'色('+passes+'次印)');
+    const ptypeNote=is4||isK?'':((' 等级'+$('cm-area').value)+' '+cols+'色('+passes+'次印)');
     const sideNote=$('cm-printside').value==='双面'?' ×2':'';
-    add(`印刷费（${$('cm-ptype').value}${ptypeNote} · ${$('cm-printside').value}${sideNote}${qty>1000?'，>1000印+0.03/印':'，≤1000印仅收出版费'}）`, print);
+    const threshNote=isK?('，按'+kRate+'/印 × 印数'):(qty>1000?'，>1000印+0.03/印':'，≤1000印仅收出版费');
+    add(`印刷费（${ptype}${ptypeNote} · ${$('cm-printside').value}${sideNote}${threshNote}）`, print);
     const lam=$('cm-lam').value;
     if(lam!=='无'){
       const up=(lam==='亚膜'?0.55:0.5);
@@ -316,8 +321,9 @@ function calc(){
         add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}cm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
       }
     }
-    const pub = is4 ? 150 : (num('cm-colors')||1)*num('cm-plateprice');
-    add(`出版费（${is4?'四色固定150元':(num('cm-colors')+'色 × '+num('cm-plateprice')+'元/版')}）`, pub);
+    const pub = is4 ? 150 : (isK ? 0 : (num('cm-colors')||1)*num('cm-plateprice'));
+    const pubNote = is4 ? '四色固定150元' : isK ? '快印无出版费' : (num('cm-colors')+'色 × '+num('cm-plateprice')+'元/版');
+    add(`出版费（${pubNote}）`, pub);
     const mountOn=$('cm-mount').value==='是';
     const sh=mountOn?Math.ceil(qty/2):qty; // 对裱时两张合一，模切印数随对裱保持一致
     if(mountOn){ add(`对裱费（0.08元/张 × ${sh}张，两张合1张）`, 0.08*sh); }
