@@ -107,7 +107,7 @@ details[open] summary::before{content:"▾ "}
 <body>
 <header class="top">
   <h1>🐴 印刷报价计算器</h1>
-  <p>成本核算独立工作台 · 纸张/不干胶/白水铜 · 自动报价与利润</p>
+  <p>成本核算独立工作台 · 纸张/不干胶 · 自动报价与利润</p>
 </header>
 
 <div class="wrap">
@@ -118,8 +118,7 @@ details[open] summary::before{content:"▾ "}
       <div class="field"><label>材料大类</label>
         <select id="cm-cat">
           <option value="铜版纸">铜版纸</option><option value="白卡">白卡</option>
-          <option value="牛皮纸">牛皮纸</option><option value="不干胶">不干胶</option>
-          <option value="白水铜">白水铜（32×46cm）</option>
+          <option value="牛皮纸">牛皮纸</option>          <option value="不干胶">不干胶</option>
         </select>
       </div>
       <div class="field"><label>印刷数量(印)</label><input type="number" id="cm-qty" value="1000" inputmode="numeric"/></div>
@@ -163,18 +162,17 @@ details[open] summary::before{content:"▾ "}
   <div class="card" id="grp-adhesive" style="display:none">
     <h3><span class="dot"></span>② 不干胶参数</h3>
     <div class="grid2 rowgap">
-      <div class="field"><label>是否预模切</label><select id="cm-pre"><option>是</option><option>否</option></select></div>
       <div class="field"><label>单枚长度(cm)</label><input type="number" id="cm-unitlen" value="10" inputmode="decimal"/></div>
+      <div class="field"><label>单枚宽度(cm)</label><input type="number" id="cm-unitwidth" value="10" inputmode="decimal"/></div>
     </div>
     <div class="grid2 rowgap">
-      <div class="field"><label>单枚宽度(cm)</label><input type="number" id="cm-unitwidth" value="10" inputmode="decimal"/></div>
       <div class="field"><label>印刷色彩</label>
         <select id="cm-acolor"><option value="0">无印</option><option value="0.12">黑白(+0.12)</option><option value="0.3" selected>彩色(+0.3)</option></select>
       </div>
     </div>
   </div>
 
-  <!-- ② 白水铜已合并进不干胶板块（见 grp-adhesive） -->
+  <!-- ② 白水铜选项已删除 -->
 
   <!-- ③ 报价加成 -->
   <div class="card">
@@ -198,7 +196,7 @@ details[open] summary::before{content:"▾ "}
   <div class="card">
     <details>
       <summary>查看计算词库与规则</summary>
-      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费：四色/单色仅&gt;1000印另算（四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费）；快印按数字印刷计：黑白0.12/印、彩色0.3/印，×印数(双面×2)，无出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；⑤白水铜已并入不干胶算法（标准尺寸32×46cm）：按长度×宽度×2元/㎡纸张费 + 印刷费计，不再单列基材单价；⑥出版费：四色固定150元，单色=单色数量×版单价；出刀版费手动输入（20–100元，与模切独立勾选，仅出刀版=是时计）、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
+      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费：四色/单色仅&gt;1000印另算（四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费）；快印按数字印刷计：黑白0.12/印、彩色0.3/印，×印数(双面×2)，无出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶按长度×宽度×2元/㎡纸张费 + 印刷费计（不收卷材费）；⑥出版费：四色固定150元，单色=单色数量×版单价；出刀版费手动输入（20–100元，与模切独立勾选，仅出刀版=是时计）、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
     </details>
     <div style="margin-top:10px">
       <div style="font-size:12.5px;color:var(--text-soft);font-weight:600;margin-bottom:7px">📈 原材料行情参考</div>
@@ -257,17 +255,12 @@ function syncPaper(){
 function toggle(){
   const cat=$('cm-cat').value;
   $('grp-paper').style.display   =(cat==='铜版纸'||cat==='白卡'||cat==='牛皮纸')?'':'none';
-  $('grp-adhesive').style.display=(cat==='不干胶'||cat==='白水铜')?'':'none';
+  $('grp-adhesive').style.display=(cat==='不干胶')?'':'none';
   $('grp-mono').style.display    =($('cm-ptype').value==='单色')?'':'none';
   $('grp-lamside').style.display =($('cm-lam').value!=='无')?'':'none';
   $('grp-knifefee').style.display=($('cm-knife').value==='是')?'':'none';
 }
 ['cm-cat','cm-weight','cm-std','cm-up','cm-ptype','cm-lam','cm-knife'].forEach(id=>$(id).addEventListener('change',()=>{toggle();syncPaper();}));
-// 白水铜合并进不干胶板块：选白水铜时默认填标准尺寸 32×46cm
-$('cm-cat').addEventListener('change',()=>{
-  if($('cm-cat').value==='白水铜'){ $('cm-unitlen').value=32; $('cm-unitwidth').value=46; }
-  else if($('cm-cat').value==='不干胶'){ $('cm-unitlen').value=10; $('cm-unitwidth').value=10; }
-});
 toggle(); syncPaper();
 
 function calc(){
@@ -279,20 +272,16 @@ function calc(){
   const lines=[]; let subtotal=0;
   const add=(name,val)=>{ if(val>0){ lines.push([name,val]); subtotal+=val; } };
 
-  if(cat==='不干胶'||cat==='白水铜'){
-    const mat=cat;
-    const pre=$('cm-pre').value==='是', unit=pre?2.5:2.0;
-    const m=qty*(num('cm-unitlen')/100);
-    add(`${mat}卷材费（${pre?'已模切':'未模切'} ${unit}元/米 × ${m.toFixed(2)}米）`, m*unit);
-    // 纸张费：长度×宽度(换算成米)×2元/m²（模切与否同价）
+  if(cat==='不干胶'){
+    // 纸张费：长度×宽度(换算成米)×2元/m²
     const ul=num('cm-unitlen'), uw=num('cm-unitwidth');
     const pm2=(ul/100)*(uw/100);
-    add(`${mat}纸张费（${ul}×${uw}cm=${pm2.toFixed(4)}m²/枚 ×2元/m² ×${qty}枚）`, pm2*2*qty);
+    add(`不干胶纸张费（${ul}×${uw}cm=${pm2.toFixed(4)}m²/枚 ×2元/m² ×${qty}枚）`, pm2*2*qty);
     // 印刷费：彩色 0.3/张、黑白 0.12/张，单独列项计算
     const ap=+$('cm-acolor').value;
     if(ap>0){
       const an=ap===0.3?'彩色':'黑白';
-      add(`${mat}印刷费（${an} ${ap}元/张 × ${qty}张）`, ap*qty);
+      add(`不干胶印刷费（${an} ${ap}元/张 × ${qty}张）`, ap*qty);
     }
   } else {
     const perSheet=num('cm-paperprice');
@@ -356,7 +345,7 @@ function reset(){
   $('cm-cat').value='铜版纸'; $('cm-qty').value=1000; $('cm-weight').value='300'; $('cm-std').value='大度'; $('cm-up').value='6';
   $('cm-ptype').value='四色'; $('cm-area').value='40'; $('cm-printside').value='单面'; $('cm-lam').value='无'; $('cm-lamside').value='单面';
   $('cm-mount').value='否'; $('cm-die').value='否'; $('cm-knife').value='否'; $('cm-knifefee').value=50;
-  $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='是'; $('cm-unitlen').value=10; $('cm-unitwidth').value=10;
+  $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-unitlen').value=10; $('cm-unitwidth').value=10;
   $('cm-acolor').value='0.3';
   $('cm-other').value=0; $('cm-margin').value=20; $('cm-tax').value=0;
   toggle(); syncPaper();
