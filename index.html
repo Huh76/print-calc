@@ -153,6 +153,9 @@ details[open] summary::before{content:"▾ "}
       <div class="field"><label>是否对裱</label><select id="cm-mount"><option>否</option><option>是</option></select></div>
       <div class="field"><label>是否模切</label><select id="cm-die"><option>否</option><option>是</option></select></div>
     </div>
+    <div class="grid2">
+      <div class="field"><label>是否出刀版</label><select id="cm-knife"><option>否</option><option>是</option></select></div>
+    </div>
   </div>
 
   <!-- ② 不干胶参数 -->
@@ -163,7 +166,7 @@ details[open] summary::before{content:"▾ "}
       <div class="field"><label>单枚长度(cm)</label><input type="number" id="cm-unitlen" value="10" inputmode="decimal"/></div>
     </div>
     <div class="grid2 rowgap">
-      <div class="field"><label>是否模切刀版</label><select id="cm-adie"><option>否</option><option>是</option></select></div>
+      <div class="field"><label>是否出刀版</label><select id="cm-adie"><option>否</option><option>是</option></select></div>
       <div class="field"><label>印刷色彩</label>
         <select id="cm-acolor"><option value="0">无印</option><option value="0.12">黑白(+0.12)</option><option value="0.3" selected>彩色(+0.3)</option></select>
       </div>
@@ -200,7 +203,7 @@ details[open] summary::before{content:"▾ "}
   <div class="card">
     <details>
       <summary>查看计算词库与规则</summary>
-      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费：四色/单色仅&gt;1000印另算（四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费）；快印按数字印刷计：黑白0.12/印、彩色0.3/印，×印数(双面×2)，无出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；⑤白水铜基材0.3/张，彩印+0.3、黑白印+0.12；⑥出版费：四色固定150元，单色=单色数量×版单价；模切刀版50起+0.05/张、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
+      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费：四色/单色仅&gt;1000印另算（四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费）；快印按数字印刷计：黑白0.12/印、彩色0.3/印，×印数(双面×2)，无出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶已模切2.5/未模切2.0元/米，米数=数量×(单枚长度cm÷100)；⑤白水铜基材0.3/张，彩印+0.3、黑白印+0.12；⑥出版费：四色固定150元，单色=单色数量×版单价；出刀版50起+0.05/张（与模切独立勾选，现成刀版可仅选模切不收刀版费）、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
     </details>
     <div style="margin-top:10px">
       <div style="font-size:12.5px;color:var(--text-soft);font-weight:600;margin-bottom:7px">📈 原材料行情参考</div>
@@ -280,7 +283,7 @@ function calc(){
     const pre=$('cm-pre').value==='是', unit=pre?2.5:2.0;
     const m=qty*(num('cm-unitlen')/100);
     add(`不干胶卷材费（${pre?'已模切':'未模切'} ${unit}元/米 × ${m.toFixed(2)}米）`, m*unit);
-    if($('cm-adie').value==='是') add('模切刀版费（50起 +0.05/张）', 50+(qty>1000?0.05*(qty-1000):0));
+    if($('cm-adie').value==='是') add('出刀版费（50起 +0.05/张）', 50+(qty>1000?0.05*(qty-1000):0));
     // 不干胶印刷费：彩色 0.3/张、黑白 0.12/张，单独列项计算
     const ap=+$('cm-acolor').value;
     if(ap>0){
@@ -327,7 +330,7 @@ function calc(){
     const mountOn=$('cm-mount').value==='是';
     const sh=mountOn?Math.ceil(qty/2):qty; // 对裱时两张合一，模切印数随对裱保持一致
     if(mountOn){ add(`对裱费（0.08元/张 × ${sh}张，两张合1张）`, 0.08*sh); }
-    if($('cm-die').value==='是') add(`模切刀版费（50起 +0.05/张${mountOn?'，对裱同数':''}）`, 50+(sh>1000?0.05*(sh-1000):0));
+    if($('cm-knife').value==='是') add(`出刀版费（50起 +0.05/张${mountOn?'，对裱同数':''}）`, 50+(sh>1000?0.05*(sh-1000):0));
   }
 
   const unit=subtotal/qty;
