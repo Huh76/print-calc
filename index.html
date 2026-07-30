@@ -167,10 +167,6 @@ details[open] summary::before{content:"▾ "}
       <div class="field"><label>单枚长度(cm)</label><input type="number" id="cm-unitlen" value="10" inputmode="decimal"/></div>
     </div>
     <div class="grid2 rowgap">
-      <div class="field"><label>是否出刀版</label><select id="cm-adie"><option>否</option><option>是</option></select></div>
-      <div class="field" id="grp-adie-fee" style="display:none"><label>刀版费(元)</label><input type="number" id="cm-adiefee" value="50" min="0" step="1" inputmode="decimal"/></div>
-    </div>
-    <div class="grid2 rowgap">
       <div class="field"><label>印刷色彩</label>
         <select id="cm-acolor"><option value="0">无印</option><option value="0.12">黑白(+0.12)</option><option value="0.3" selected>彩色(+0.3)</option></select>
       </div>
@@ -271,9 +267,8 @@ function toggle(){
   $('grp-mono').style.display    =($('cm-ptype').value==='单色')?'':'none';
   $('grp-lamside').style.display =($('cm-lam').value!=='无')?'':'none';
   $('grp-knifefee').style.display=($('cm-knife').value==='是')?'':'none';
-  $('grp-adie-fee').style.display=($('cm-adie').value==='是')?'':'none';
 }
-['cm-cat','cm-weight','cm-std','cm-up','cm-ptype','cm-lam','cm-knife','cm-adie'].forEach(id=>$(id).addEventListener('change',()=>{toggle();syncPaper();}));
+['cm-cat','cm-weight','cm-std','cm-up','cm-ptype','cm-lam','cm-knife'].forEach(id=>$(id).addEventListener('change',()=>{toggle();syncPaper();}));
 toggle(); syncPaper();
 
 function calc(){
@@ -289,7 +284,6 @@ function calc(){
     const pre=$('cm-pre').value==='是', unit=pre?2.5:2.0;
     const m=qty*(num('cm-unitlen')/100);
     add(`不干胶卷材费（${pre?'已模切':'未模切'} ${unit}元/米 × ${m.toFixed(2)}米）`, m*unit);
-    if($('cm-adie').value==='是') add('出刀版费（手动输入）', num('cm-adiefee'));
     // 不干胶印刷费：彩色 0.3/张、黑白 0.12/张，单独列项计算
     const ap=+$('cm-acolor').value;
     if(ap>0){
@@ -362,7 +356,7 @@ function reset(){
   $('cm-ptype').value='四色'; $('cm-area').value='40'; $('cm-printside').value='单面'; $('cm-lam').value='无'; $('cm-lamside').value='单面';
   $('cm-mount').value='否'; $('cm-die').value='否'; $('cm-knife').value='否'; $('cm-knifefee').value=50;
   $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='是'; $('cm-unitlen').value=10;
-  $('cm-adie').value='否'; $('cm-adiefee').value=50; $('cm-acolor').value='0.3'; $('cm-color').value='0.3';
+  $('cm-acolor').value='0.3'; $('cm-color').value='0.3';
   $('cm-other').value=0; $('cm-margin').value=20; $('cm-tax').value=0;
   toggle(); syncPaper();
   $('cm-result').classList.remove('show'); $('cm-quote').classList.remove('show');
