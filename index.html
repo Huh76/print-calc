@@ -318,8 +318,10 @@ function calc(){
     }
     const pub = is4 ? 150 : (num('cm-colors')||1)*num('cm-plateprice');
     add(`出版费（${is4?'四色固定150元':(num('cm-colors')+'色 × '+num('cm-plateprice')+'元/版')}）`, pub);
-    if($('cm-mount').value==='是'){ const sh=Math.ceil(qty/2); add(`对裱费（0.08元/张 × ${sh}张，两张合1张）`, 0.08*sh); }
-    if($('cm-die').value==='是') add('模切刀版费（50起 +0.05/张）', 50+(qty>1000?0.05*(qty-1000):0));
+    const mountOn=$('cm-mount').value==='是';
+    const sh=mountOn?Math.ceil(qty/2):qty; // 对裱时两张合一，模切印数随对裱保持一致
+    if(mountOn){ add(`对裱费（0.08元/张 × ${sh}张，两张合1张）`, 0.08*sh); }
+    if($('cm-die').value==='是') add(`模切刀版费（50起 +0.05/张${mountOn?'，对裱同数':''}）`, 50+(sh>1000?0.05*(sh-1000):0));
   }
 
   const unit=subtotal/qty;
