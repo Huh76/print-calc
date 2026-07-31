@@ -158,9 +158,9 @@ details[open] summary::before{content:"▾ "}
     </div>
   </div>
 
-  <!-- ② 不干胶参数 -->
+  <!-- ② 不干胶大张参数 -->
   <div class="card" id="grp-adhesive" style="display:none">
-    <h3><span class="dot"></span>② 不干胶参数</h3>
+    <h3><span class="dot"></span>② 不干胶大张参数</h3>
     <div class="grid2 rowgap">
       <div class="field"><label>单枚长度(cm)</label><input type="number" id="cm-unitlen" value="10" inputmode="decimal"/></div>
       <div class="field"><label>单枚宽度(cm)</label><input type="number" id="cm-unitwidth" value="10" inputmode="decimal"/></div>
@@ -170,6 +170,9 @@ details[open] summary::before{content:"▾ "}
       <div class="field"><label>印刷色彩</label>
         <select id="cm-acolor"><option value="0">无印</option><option value="0.12">黑白(+0.12)</option><option value="0.3" selected>彩色(+0.3)</option></select>
       </div>
+    </div>
+    <div class="grid2 rowgap">
+      <div class="field"><label>是否需要覆膜</label><select id="cm-alam"><option selected>无</option><option>亚膜</option><option>光膜</option></select></div>
     </div>
   </div>
 
@@ -195,11 +198,7 @@ details[open] summary::before{content:"▾ "}
 
   <!-- 规则与行情 -->
   <div class="card">
-    <details>
-      <summary>查看计算词库与规则</summary>
-      <div class="hint">①纸价库（元/全张）157g铜版大度1.05、300g铜版正度1.6/大度1.8、250g白卡大度1.3、300g白卡大度1.5、350g白卡大度1.8、300g牛皮纸大度2，开数按「全张价÷开数」计；开度实际尺寸随开数/大度正度自动显示（如全开正度78.7×109.2/大度88.9×119.4，8开大度29.5×44.0等）；②印刷费：四色/单色仅&gt;1000印另算（四色0.03/印、单色(面积等级+0.03/印)×印次(每2色同次印，第3色起+1次)，单面计、双面×2；≤1000印仅收出版费）；快印按数字印刷计：黑白0.12/印、彩色0.3/印，×印数(双面×2)，无出版费；③覆膜亚膜0.55/m²、光膜0.5/m²，按「开度尺寸长×宽(m²)×单价×数量×(双面×2)」计（开度无尺寸数据时不计覆膜）；④不干胶纸张费＝长度×宽度×面价（已模切2.5元/㎡、未模切2元/㎡）+ 印刷费（不收卷材费）；⑥出版费：四色固定150元，单色=单色数量×版单价；出刀版费手动输入（20–100元，与模切独立勾选，仅出刀版=是时计）、对裱0.08/张(两张合1张)。直接成本不含裁切费及管理费，结果仅供参考估算，不可直接作为签约报价。</div>
-    </details>
-    <div style="margin-top:10px">
+    <div style="margin-top:0">
       <div style="font-size:12.5px;color:var(--text-soft);font-weight:600;margin-bottom:7px">📈 原材料行情参考</div>
       <div class="links">
         <a href="https://www.baidu.com/s?wd=%E9%93%9C%E7%89%88%E7%BA%B8%20%E4%BB%8A%E6%97%A5%E7%BA%B8%E4%BB%B7" target="_blank">铜版纸纸价 ↗</a>
@@ -261,7 +260,7 @@ function toggle(){
   $('grp-lamside').style.display =($('cm-lam').value!=='无')?'':'none';
   $('grp-knifefee').style.display=($('cm-knife').value==='是')?'':'none';
 }
-['cm-cat','cm-weight','cm-std','cm-up','cm-ptype','cm-lam','cm-knife'].forEach(id=>$(id).addEventListener('change',()=>{toggle();syncPaper();}));
+['cm-cat','cm-weight','cm-std','cm-up','cm-ptype','cm-lam','cm-knife','cm-alam'].forEach(id=>$(id).addEventListener('change',()=>{toggle();syncPaper();}));
 toggle(); syncPaper();
 
 function calc(){
@@ -307,14 +306,26 @@ function calc(){
     const sideNote=$('cm-printside').value==='双面'?' ×2':'';
     const threshNote=isK?('，按'+kRate+'/印 × 印数'):(qty>1000?'，>1000印+0.03/印':'，≤1000印仅收出版费');
     add(`印刷费（${ptype}${ptypeNote} · ${$('cm-printside').value}${sideNote}${threshNote}）`, print);
-    const lam=$('cm-lam').value;
-    if(lam!=='无'){
-      const up=(lam==='亚膜'?0.55:0.5);
-      const sz=sizeOf($('cm-up').value,$('cm-std').value);
-      if(sz){
-        const area=(sz.w/100)*(sz.h/100);
-        const m2=qty*area*($('cm-lamside').value==='双面'?2:1);
-        add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}cm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
+    // 覆膜：不干胶按单枚长×宽，其它按开度尺寸长×宽
+    if(cat==='不干胶'){
+      const alam=$('cm-alam').value;
+      if(alam!=='无'){
+        const up=(alam==='亚膜'?0.55:0.5);
+        const ul=num('cm-unitlen'), uw=num('cm-unitwidth');
+        const area=(ul/100)*(uw/100);
+        const m2=qty*area;
+        add(`覆膜费（${alam} ${up}元/m² × ${m2.toFixed(4)}m² 单枚${ul}×${uw}cm）`, up*m2);
+      }
+    } else {
+      const lam=$('cm-lam').value;
+      if(lam!=='无'){
+        const up=(lam==='亚膜'?0.55:0.5);
+        const sz=sizeOf($('cm-up').value,$('cm-std').value);
+        if(sz){
+          const area=(sz.w/100)*(sz.h/100);
+          const m2=qty*area*($('cm-lamside').value==='双面'?2:1);
+          add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}cm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
+        }
       }
     }
     const pub = is4 ? 150 : (isK ? 0 : (num('cm-colors')||1)*num('cm-plateprice'));
@@ -348,7 +359,7 @@ function reset(){
   $('cm-cat').value='铜版纸'; $('cm-qty').value=1000; $('cm-weight').value='300'; $('cm-std').value='大度'; $('cm-up').value='6';
   $('cm-ptype').value='四色'; $('cm-area').value='40'; $('cm-printside').value='单面'; $('cm-lam').value='无'; $('cm-lamside').value='单面';
   $('cm-mount').value='否'; $('cm-die').value='否'; $('cm-knife').value='否'; $('cm-knifefee').value=50;
-  $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='否'; $('cm-unitlen').value=10; $('cm-unitwidth').value=10;
+  $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='否'; $('cm-alam').value='无'; $('cm-unitlen').value=10; $('cm-unitwidth').value=10;
   $('cm-acolor').value='0.3';
   $('cm-other').value=0; $('cm-margin').value=20; $('cm-tax').value=0;
   toggle(); syncPaper();
