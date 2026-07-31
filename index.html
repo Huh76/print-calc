@@ -162,8 +162,8 @@ details[open] summary::before{content:"▾ "}
   <div class="card" id="grp-adhesive" style="display:none">
     <h3><span class="dot"></span>② 不干胶大张参数</h3>
     <div class="grid2 rowgap">
-      <div class="field"><label>单枚长度(cm)</label><input type="number" id="cm-unitlen" value="10" inputmode="decimal"/></div>
-      <div class="field"><label>单枚宽度(cm)</label><input type="number" id="cm-unitwidth" value="10" inputmode="decimal"/></div>
+      <div class="field"><label>单枚长度(mm)</label><input type="number" id="cm-unitlen" value="100" inputmode="decimal"/></div>
+      <div class="field"><label>单枚宽度(mm)</label><input type="number" id="cm-unitwidth" value="100" inputmode="decimal"/></div>
     </div>
     <div class="grid2 rowgap">
       <div class="field"><label>是否预模切</label><select id="cm-pre"><option selected>否</option><option>是</option></select></div>
@@ -228,18 +228,18 @@ const PAPER={
   '牛皮纸':{'300':{大度:2.0}}
 };
 const SIZES={
-  '1':{正度:'78.7×109.2', 大度:'88.9×119.4'},
-  '4':{正度:'39.0×54.0',  大度:'44.0×59.0'},
-  '5':{正度:'33.0×45.0',  大度:'38.0×50.2'},
-  '6':{正度:'36.0×39.0',  大度:'39.4×44.0'},
-  '8':{正度:'27.0×39.0',  大度:'29.5×44.0'},
-  '9':{正度:'26.0×36.0',  大度:'29.4×39.4'},
-  '10':{正度:'21.6×39.0', 大度:'23.6×44.0'}
+  '1':{正度:'787×1092', 大度:'889×1194'},
+  '4':{正度:'390×540',  大度:'440×590'},
+  '5':{正度:'330×450',  大度:'380×502'},
+  '6':{正度:'360×390',  大度:'394×440'},
+  '8':{正度:'270×390',  大度:'295×440'},
+  '9':{正度:'260×360',  大度:'294×394'},
+  '10':{正度:'216×390', 大度:'236×440'}
 };
 function num(id){ const el=$(id); return el?(+el.value||0):0; }
 function showSize(){
   const s=SIZES[$('cm-up').value] && SIZES[$('cm-up').value][$('cm-std').value];
-  $('cm-size').textContent = s ? ($('cm-std').value+' '+s+' cm') : '该开度尺寸未收录';
+  $('cm-size').textContent = s ? ($('cm-std').value+' '+s+' mm') : '该开度尺寸未收录';
 }
 function sizeOf(up,std){
   const s=SIZES[up]&&SIZES[up][std]; if(!s)return null;
@@ -277,8 +277,8 @@ function calc(){
     const pre=$('cm-pre').value==='是';
     const rate=pre?2.5:2.0;
     const ul=num('cm-unitlen'), uw=num('cm-unitwidth');
-    const pm2=(ul/100)*(uw/100);
-    add(`不干胶纸张费（${ul}×${uw}cm=${pm2.toFixed(4)}m²/枚 ×${rate}元/m² ${pre?'已模切':'未模切'} ×${qty}枚）`, pm2*rate*qty);
+    const pm2=(ul/1000)*(uw/1000);
+    add(`不干胶纸张费（${ul}×${uw}mm=${pm2.toFixed(4)}m²/枚 ×${rate}元/m² ${pre?'已模切':'未模切'} ×${qty}枚）`, pm2*rate*qty);
     // 印刷费：彩色 0.3/张、黑白 0.12/张，单独列项计算
     const ap=+$('cm-acolor').value;
     if(ap>0){
@@ -312,9 +312,9 @@ function calc(){
       if(alam!=='无'){
         const up=(alam==='亚膜'?0.55:0.5);
         const ul=num('cm-unitlen'), uw=num('cm-unitwidth');
-        const area=(ul/100)*(uw/100);
+        const area=(ul/1000)*(uw/1000);
         const m2=qty*area;
-        add(`覆膜费（${alam} ${up}元/m² × ${m2.toFixed(4)}m² 单枚${ul}×${uw}cm）`, up*m2);
+        add(`覆膜费（${alam} ${up}元/m² × ${m2.toFixed(4)}m² 单枚${ul}×${uw}mm）`, up*m2);
       }
     } else {
       const lam=$('cm-lam').value;
@@ -322,9 +322,9 @@ function calc(){
         const up=(lam==='亚膜'?0.55:0.5);
         const sz=sizeOf($('cm-up').value,$('cm-std').value);
         if(sz){
-          const area=(sz.w/100)*(sz.h/100);
+          const area=(sz.w/1000)*(sz.h/1000);
           const m2=qty*area*($('cm-lamside').value==='双面'?2:1);
-          add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}cm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
+          add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}mm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
         }
       }
     }
@@ -359,7 +359,7 @@ function reset(){
   $('cm-cat').value='铜版纸'; $('cm-qty').value=1000; $('cm-weight').value='300'; $('cm-std').value='大度'; $('cm-up').value='6';
   $('cm-ptype').value='四色'; $('cm-area').value='40'; $('cm-printside').value='单面'; $('cm-lam').value='无'; $('cm-lamside').value='单面';
   $('cm-mount').value='否'; $('cm-die').value='否'; $('cm-knife').value='否'; $('cm-knifefee').value=50;
-  $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='否'; $('cm-alam').value='无'; $('cm-unitlen').value=10; $('cm-unitwidth').value=10;
+  $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='否'; $('cm-alam').value='无'; $('cm-unitlen').value=100; $('cm-unitwidth').value=100;
   $('cm-acolor').value='0.3';
   $('cm-other').value=0; $('cm-margin').value=20; $('cm-tax').value=0;
   toggle(); syncPaper();
