@@ -330,8 +330,15 @@ function calc(){
     const pubNote = is4 ? '四色固定150元' : isK ? '快印无出版费' : (num('cm-colors')+'色 × '+num('cm-plateprice')+'元/版');
     add(`出版费（${pubNote}）`, pub);
     const mountOn=$('cm-mount').value==='是';
-    const sh=mountOn?Math.ceil(qty/2):qty; // 对裱时两张合一，模切印数随对裱保持一致
+    const sh=mountOn?Math.ceil(qty/2):qty; // 对裱时两张合一
     if(mountOn){ add(`对裱费（0.08元/张 × ${sh}张，两张合1张）`, 0.08*sh); }
+    // 模切费：50元起步，超出数量>1000 部分每张+0.05；有对裱时模切数量按对裱数量计
+    if($('cm-die').value==='是'){
+      const dieQty=sh; // sh 已含对裱折算（对裱=ceil(qty/2)，否则=qty）
+      const over=Math.max(0,dieQty-1000);
+      const dieFee=50+over*0.05;
+      add(`模切费（50元起步 + 超${over}张×0.05${mountOn?'，按对裱数'+dieQty+'张':''}）`, dieFee);
+    }
     if($('cm-knife').value==='是') add(`出刀版费（手动输入${mountOn?'，对裱同数':''}）`, num('cm-knifefee'));
   }
 
