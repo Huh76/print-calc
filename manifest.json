@@ -1,0 +1,15 @@
+{
+  "name": "印刷报价计算器",
+  "short_name": "印刷报价",
+  "description": "纸张/不干胶 成本核算与自动报价工作台",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff3e6",
+  "theme_color": "#ff6f92",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
