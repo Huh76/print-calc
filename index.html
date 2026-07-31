@@ -140,7 +140,6 @@ details[open] summary::before{content:"▾ "}
       <div class="field"><label>印刷面</label><select id="cm-printside"><option>单面</option><option>双面</option></select></div>
     </div>
     <div class="grid2 rowgap" id="grp-mono" style="display:none">
-      <div class="field"><label>单色面积等级</label><select id="cm-area"><option value="30">小(30)</option><option value="40" selected>中(40)</option><option value="50">大(50)</option></select></div>
       <div class="field"><label>单色数量</label><select id="cm-colors"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
       <div class="field" style="grid-column:1/-1"><label>出版版单价(元/版)</label><input type="number" id="cm-plateprice" value="30" inputmode="decimal"/></div>
     </div>
@@ -302,16 +301,16 @@ function calc(){
     const is4=ptype==='四色';
     const isK=ptype==='快印黑白'||ptype==='快印彩色';
     const kRate=isK?(ptype==='快印黑白'?0.12:0.3):0;
-    const cols=(num('cm-colors')||1), base=+$('cm-area').value;
-    const passes=is4?1:Math.ceil(cols/2);
+    const cols=(num('cm-colors')||1);
+    const passes=is4?1:Math.ceil(cols/2); // 单色每2色合印一次：3色=2次(2色同印+1色单印)
     let print=0;
     if(isK){
       print=kRate*qty*sideMul;
     } else if(qty>1000){
       const over=qty-1000;
-      print=is4 ? 0.03*over*sideMul : (base+0.03*over)*passes*sideMul;
+      print=0.03*over*passes*sideMul; // 每印(次)超过1000部分 +0.03/印
     }
-    const ptypeNote=is4||isK?'':((' 等级'+$('cm-area').value)+' '+cols+'色('+passes+'次印)');
+    const ptypeNote=is4||isK?'':(cols+'色('+passes+'次印)');
     const sideNote=$('cm-printside').value==='双面'?' ×2':'';
     const threshNote=isK?('，按'+kRate+'/印 × 印数'):(qty>1000?'，>1000印+0.03/印':'，≤1000印仅收出版费');
     add(`印刷费（${ptype}${ptypeNote} · ${$('cm-printside').value}${sideNote}${threshNote}）`, print);
@@ -362,7 +361,7 @@ function calc(){
 }
 function reset(){
   $('cm-cat').value='铜版纸'; $('cm-qty').value=1000; $('cm-weight').value='300'; $('cm-std').value='大度'; $('cm-up').value='6';
-  $('cm-ptype').value='四色'; $('cm-area').value='40'; $('cm-printside').value='单面'; $('cm-lam').value='无'; $('cm-lamside').value='单面';
+  $('cm-ptype').value='四色'; $('cm-printside').value='单面'; $('cm-lam').value='无'; $('cm-lamside').value='单面';
   $('cm-mount').value='否'; $('cm-die').value='否'; $('cm-knife').value='否'; $('cm-knifefee').value=50;
   $('cm-plateprice').value=30; $('cm-colors').value='1'; $('cm-pre').value='否'; $('cm-alam').value='无'; $('cm-unitlen').value=100; $('cm-unitwidth').value=100;
   $('cm-acolor').value='0.3';
