@@ -285,6 +285,15 @@ function calc(){
       const an=ap===0.3?'彩色':'黑白';
       add(`不干胶印刷费（${an} ${ap}元/张 × ${qty}张）`, ap*qty);
     }
+    // 覆膜：不干胶按单枚长×宽(换算成米) × 面价 × 数量
+    const alam=$('cm-alam').value;
+    if(alam!=='无'){
+      const up=(alam==='亚膜'?0.55:0.5);
+      const ul=num('cm-unitlen'), uw=num('cm-unitwidth');
+      const area=(ul/1000)*(uw/1000);
+      const m2=qty*area;
+      add(`覆膜费（${alam} ${up}元/m² × ${m2.toFixed(4)}m² 单枚${ul}×${uw}mm）`, up*m2);
+    }
   } else {
     const perSheet=num('cm-paperprice');
     add(`纸张费（每开 ¥${perSheet.toFixed(3)} = 全开价÷${$('cm-up').value}开 × ${qty}张）`, perSheet*qty);
@@ -306,26 +315,15 @@ function calc(){
     const sideNote=$('cm-printside').value==='双面'?' ×2':'';
     const threshNote=isK?('，按'+kRate+'/印 × 印数'):(qty>1000?'，>1000印+0.03/印':'，≤1000印仅收出版费');
     add(`印刷费（${ptype}${ptypeNote} · ${$('cm-printside').value}${sideNote}${threshNote}）`, print);
-    // 覆膜：不干胶按单枚长×宽，其它按开度尺寸长×宽
-    if(cat==='不干胶'){
-      const alam=$('cm-alam').value;
-      if(alam!=='无'){
-        const up=(alam==='亚膜'?0.55:0.5);
-        const ul=num('cm-unitlen'), uw=num('cm-unitwidth');
-        const area=(ul/1000)*(uw/1000);
-        const m2=qty*area;
-        add(`覆膜费（${alam} ${up}元/m² × ${m2.toFixed(4)}m² 单枚${ul}×${uw}mm）`, up*m2);
-      }
-    } else {
-      const lam=$('cm-lam').value;
-      if(lam!=='无'){
-        const up=(lam==='亚膜'?0.55:0.5);
-        const sz=sizeOf($('cm-up').value,$('cm-std').value);
-        if(sz){
-          const area=(sz.w/1000)*(sz.h/1000);
-          const m2=qty*area*($('cm-lamside').value==='双面'?2:1);
-          add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}mm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
-        }
+    // 覆膜（其它材料按开度尺寸长×宽）
+    const lam=$('cm-lam').value;
+    if(lam!=='无'){
+      const up=(lam==='亚膜'?0.55:0.5);
+      const sz=sizeOf($('cm-up').value,$('cm-std').value);
+      if(sz){
+        const area=(sz.w/1000)*(sz.h/1000);
+        const m2=qty*area*($('cm-lamside').value==='双面'?2:1);
+        add(`覆膜费（${lam} ${up}元/m² × ${m2.toFixed(4)}m² 开度${sz.w}×${sz.h}mm${$('cm-lamside').value==='双面'?' 双面':''}）`, up*m2);
       }
     }
     const pub = is4 ? 150 : (isK ? 0 : (num('cm-colors')||1)*num('cm-plateprice'));
